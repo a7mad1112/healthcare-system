@@ -1,5 +1,6 @@
+// admins.js
 import { Model, DataTypes } from "sequelize";
-import sequelize from "../config/database.js";
+import { sequelize } from "../connection.js"; // Fix import here
 import User from "./user.js";
 
 class Admin extends Model {}
@@ -33,5 +34,7 @@ Admin.init(
   }
 );
 
+// Define the relationship
 Admin.belongsTo(User, { foreignKey: "user_id" });
+
 export default Admin;
