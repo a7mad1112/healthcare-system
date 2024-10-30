@@ -39,6 +39,6 @@ Clinic.init(
 );
 
 // Define relationships
-Clinic.belongsTo(User, { foreignKey: "user_id" });
+Clinic.belongsTo(User, { foreignKey: "user_id", onDelete: "CASCADE" });
 
 export default Clinic;

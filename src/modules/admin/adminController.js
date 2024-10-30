@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import User from "../../../db/models/user.js";
 import Clinic from "./../../../db/models/clinics.js";
+import { sequelize } from "../../../db/connection.js";
 
 export const createClinic = async (req, res, next) => {
   const { name, phone_number, location, userData } = req.body;
@@ -10,7 +11,7 @@ export const createClinic = async (req, res, next) => {
     where: { email: userData.email },
   });
   if (existingUser) {
-    return res.status(400).json({ message: "Email already in use." });
+    return next(new Error("Email already in use.", { cause: 400 }));
   }
 
   // Hash the user's password
@@ -21,8 +22,7 @@ export const createClinic = async (req, res, next) => {
       +process.env.SALT_ROUND
     );
   } catch (hashError) {
-    console.error("Error hashing password:", hashError);
-    return res.status(500).json({ message: "Error hashing password." });
+    return next(new Error("Error hashing password.", { cause: 500 }));
   }
 
   // Create a new user for the clinic
@@ -43,4 +43,38 @@ export const createClinic = async (req, res, next) => {
     message: "Clinic created successfully.",
     clinic: newClinic,
   });
+};
+
+export const deleteClinic = async (req, res, next) => {
+  const { clinic_id } = req.params;
+
+  // Start a transaction
+  const transaction = await sequelize.transaction();
+
+  // Find the clinic by ID
+  const clinic = await Clinic.findByPk(clinic_id, { transaction });
+  if (!clinic) {
+    await transaction.rollback();
+    return next(new Error("Clinic not found.", { cause: 404 }));
+  }
+
+  // Find the associated user by user_id
+  const user = await User.findByPk(clinic.user_id, { transaction });
+  if (!user) {
+    await transaction.rollback();
+    return next(
+      new Error("User associated with clinic not found.", { cause: 404 })
+    );
+  }
+
+  // Delete the clinic and the associated user
+  await clinic.destroy({ transaction });
+  await user.destroy({ transaction });
+
+  // Commit transaction if everything succeeds
+  await transaction.commit();
+
+  return res
+    .status(200)
+    .json({ message: "Clinic and associated user deleted successfully." });
 };
