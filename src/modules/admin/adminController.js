@@ -108,3 +108,13 @@ export const editClinic = async (req, res, next) => {
     .status(200)
     .json({ message: "Clinic updated successfully.", clinic });
 };
+
+export const getAllClinics = async (req, res, next) => {
+  // Retrieve all clinics from the database
+  const clinics = await Clinic.findAll();
+  // Check if clinics exist
+  if (clinics.length === 0) {
+    return next(new Error("No clinincs found.", { cause: 404 }));
+  }
+  return res.status(200).json(clinics);
+};
