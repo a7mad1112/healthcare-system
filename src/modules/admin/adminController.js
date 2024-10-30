@@ -78,3 +78,33 @@ export const deleteClinic = async (req, res, next) => {
     .status(200)
     .json({ message: "Clinic and associated user deleted successfully." });
 };
+
+export const editClinic = async (req, res, next) => {
+  const { clinic_id } = req.params;
+  const { name, phone_number, location } = req.body;
+
+  // Start a transaction
+  const transaction = await sequelize.transaction();
+
+  // Find the clinic by ID
+  const clinic = await Clinic.findByPk(clinic_id, { transaction });
+  if (!clinic) {
+    await transaction.rollback();
+    return next(new Error("Clinic not found.", { cause: 404 }));
+  }
+
+  // Update clinic details
+  clinic.name = name || clinic.name;
+  clinic.phone_number = phone_number || clinic.phone_number;
+  clinic.location = location || clinic.location;
+
+  // Save changes
+  await clinic.save({ transaction });
+
+  // Commit transaction if successful
+  await transaction.commit();
+
+  return res
+    .status(200)
+    .json({ message: "Clinic updated successfully.", clinic });
+};
