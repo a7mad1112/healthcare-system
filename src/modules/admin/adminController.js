@@ -132,3 +132,14 @@ export const getCounts = async (req, res, next) => {
     centers_labs_count: centersLabsCount,
   });
 };
+
+export const getClinicById = async (req, res, next) => {
+  const { clinic_id } = req.params;
+  // Find the clinic by ID
+  const clinic = await Clinic.findByPk(clinic_id);
+  // Check if the clinic exists
+  if (!clinic) {
+    return next(new Error("Clinic not found.", { cause: 404 }));
+  }
+  return res.status(200).json(clinic);
+};
