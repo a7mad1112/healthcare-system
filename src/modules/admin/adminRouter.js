@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { asyncHandler } from "../../../utils/errorHandler.js";
 import {
   createClinic,
   deleteClinic,
@@ -10,10 +11,10 @@ import {
 const router = Router();
 
 // Routes to clinics
-router.post("/clinics", createClinic);
-router.delete("/clinics/:clinic_id", deleteClinic);
-router.put("/clinics/:clinic_id", editClinic);
-router.get("/clinics", getAllClinics);
-router.get("/counts", getCounts);
+router.post("/clinics", asyncHandler(createClinic));
+router.delete("/clinics/:clinic_id", asyncHandler(deleteClinic));
+router.put("/clinics/:clinic_id", asyncHandler(editClinic));
+router.get("/clinics", asyncHandler(getAllClinics));
+router.get("/counts", asyncHandler(getCounts));
 
 export default router;
