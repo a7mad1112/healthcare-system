@@ -4,6 +4,7 @@ import {
   deleteClinic,
   editClinic,
   getAllClinics,
+  getCounts,
 } from "./adminController.js";
 
 const router = Router();
@@ -13,5 +14,6 @@ router.post("/clinics", createClinic);
 router.delete("/clinics/:clinic_id", deleteClinic);
 router.put("/clinics/:clinic_id", editClinic);
 router.get("/clinics", getAllClinics);
+router.get("/counts", getCounts);
 
 export default router;

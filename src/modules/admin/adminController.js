@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import User from "../../../db/models/user.js";
 import Clinic from "./../../../db/models/clinics.js";
 import { sequelize } from "../../../db/connection.js";
+import CenterLab from "../../../db/models/center_labs.js";
 
 export const createClinic = async (req, res, next) => {
   const { name, phone_number, location, userData } = req.body;
@@ -117,4 +118,17 @@ export const getAllClinics = async (req, res, next) => {
     return next(new Error("No clinincs found.", { cause: 404 }));
   }
   return res.status(200).json(clinics);
+};
+
+export const getCounts = async (req, res, next) => {
+  // Count clinics
+  const clinicsCount = await Clinic.count();
+
+  // Count center/labs
+  const centersLabsCount = await CenterLab.count();
+
+  return res.status(200).json({
+    clinics_count: clinicsCount,
+    centers_labs_count: centersLabsCount,
+  });
 };
