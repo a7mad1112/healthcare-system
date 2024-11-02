@@ -19,6 +19,6 @@ router.get("/clinics/:clinic_id", asyncHandler(clinicsContoller.getClinicById));
 router.post("/center-labs", asyncHandler(centerLabsController.createCenterLab));
 router.delete("/center-labs/:center_lab_id", asyncHandler(centerLabsController.deleteCenterLab));
 router.put("/center-labs/:center_lab_id", asyncHandler(centerLabsController.editCenterLab));
-// router.get("/center-labs", asyncHandler(getAllCenterLabs));
+router.get("/center-labs", asyncHandler(centerLabsController.getAllCenterLabs));
 // router.get("/center-labs/:center_lab_id", asyncHandler(getCenterLabById));
 export default router;

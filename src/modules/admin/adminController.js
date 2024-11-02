@@ -262,7 +262,6 @@ const editCenterLab = async (req, res, next) => {
 const getAllCenterLabs = async (req, res, next) => {
   // Retrieve all center labs from the database
   const centerLabs = await CenterLab.findAll();
-
   // Check if center labs exist
   if (centerLabs.length === 0) {
     return next(new Error("No center labs found.", { cause: 404 }));
