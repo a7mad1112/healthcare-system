@@ -31,6 +31,7 @@ const createClinic = async (req, res, next) => {
   const newUser = await User.create({
     email: userData.email,
     password: hashedPassword,
+    role: "Clinic",
   });
 
   // Create a new clinic
@@ -178,6 +179,7 @@ const createCenterLab = async (req, res, next) => {
   const newUser = await User.create({
     password: hashedPassword,
     email: userData.email,
+    role: "Center_Lab",
   });
   // Create a new center lab
   const newCenterLab = await CenterLab.create({

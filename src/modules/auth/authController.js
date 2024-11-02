@@ -16,7 +16,11 @@ export const signup = async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(password, +process.env.SALT_ROUND);
 
   // Create the user record
-  const user = await User.create({ email, password: hashedPassword });
+  const user = await User.create({
+    email,
+    password: hashedPassword,
+    role: "Admin",
+  });
 
   // Create the admin record linked to the user
   const admin = await Admin.create({
@@ -53,7 +57,7 @@ export const signin = async (req, res, next) => {
 
   // Generate JWT token
   const token = jwt.sign(
-    { userId: user.user_id, email: user.email },
+    { userId: user.user_id, email: user.email, role: user.role },
     process.env.JWT_SECRET, // Add `JWT_SECRET` to your .env file
     { expiresIn: "1h" } // Token validity (optional)
   );
