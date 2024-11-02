@@ -17,8 +17,17 @@ router.get("/clinics/:clinic_id", asyncHandler(clinicsContoller.getClinicById));
 
 //* Routes for center/labs
 router.post("/center-labs", asyncHandler(centerLabsController.createCenterLab));
-router.delete("/center-labs/:center_lab_id", asyncHandler(centerLabsController.deleteCenterLab));
-router.put("/center-labs/:center_lab_id", asyncHandler(centerLabsController.editCenterLab));
+router.delete(
+  "/center-labs/:center_lab_id",
+  asyncHandler(centerLabsController.deleteCenterLab)
+);
+router.put(
+  "/center-labs/:center_lab_id",
+  asyncHandler(centerLabsController.editCenterLab)
+);
 router.get("/center-labs", asyncHandler(centerLabsController.getAllCenterLabs));
-// router.get("/center-labs/:center_lab_id", asyncHandler(getCenterLabById));
+router.get(
+  "/center-labs/:center_lab_id",
+  asyncHandler(centerLabsController.getCenterLabById)
+);
 export default router;
