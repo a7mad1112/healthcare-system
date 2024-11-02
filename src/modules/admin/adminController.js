@@ -230,7 +230,7 @@ const deleteCenterLab = async (req, res, next) => {
 // Edit a center lab
 const editCenterLab = async (req, res, next) => {
   const { center_lab_id } = req.params;
-  const { name, phone_number, email, location } = req.body;
+  const { name, phone_number, location } = req.body;
 
   // Start a transaction
   const transaction = await sequelize.transaction();
@@ -245,7 +245,6 @@ const editCenterLab = async (req, res, next) => {
   // Update center lab details
   centerLab.name = name || centerLab.name;
   centerLab.phone_number = phone_number || centerLab.phone_number;
-  centerLab.email = email || centerLab.email;
   centerLab.location = location || centerLab.location;
 
   // Save changes
