@@ -44,6 +44,7 @@ export const auth = (accessRoles = []) => {
 
       // Check if user's role is allowed
       if (!accessRoles.includes(user.role)) {
+        console.log("user role: ", user.role);
         return res
           .status(403)
           .json({ msg: "Not authorized to access this resource" });

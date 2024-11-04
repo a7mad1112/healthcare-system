@@ -31,20 +31,23 @@ Subscription.init(
     start_date: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: DataTypes.NOW,
     },
     end_date: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: () => {
+        const now = new Date();
+        return new Date(now.setFullYear(now.getFullYear() + 1));
+      },
     },
     status: {
       type: DataTypes.ENUM("Active", "Inactive"),
       allowNull: false,
+      defaultValue: "Active",
     },
   },
-  {
-    sequelize,
-    modelName: "Subscription",
-  }
+  { tableName: "Subscriptions", sequelize, modelName: "Subscription" }
 );
 
 // Define relationships
