@@ -6,4 +6,5 @@ export const endPoints = {
   deleteSubscription: [roles.Admin],
   getAllSubscriptions: [roles.Admin],
   getSubscriptionById: [roles.Admin],
+  test: [roles.Center_Lab, roles.Clinic],
 };

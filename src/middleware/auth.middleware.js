@@ -49,7 +49,6 @@ export const auth = (accessRoles = []) => {
           .status(403)
           .json({ msg: "Not authorized to access this resource" });
       }
-
       req.user = user; // Attach user data to the request
       next();
     } catch (error) {

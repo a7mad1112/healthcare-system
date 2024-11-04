@@ -2,25 +2,37 @@ import Subscription from "../../../db/models/subscriptions.js";
 import Clinic from "../../../db/models/clinics.js";
 import CenterLab from "../../../db/models/center_labs.js";
 
-export const createSubscription = async (req, res) => {
+export const createSubscription = async (req, res, next) => {
+  console.log("Request Body:", req.body); // Log the incoming request body
+
   const { clinic_id, center_lab_id } = req.body;
+
   // Check if either clinic_id or center_lab_id is provided, but not both
   if ((!clinic_id && !center_lab_id) || (clinic_id && center_lab_id)) {
-    return res.status(400).json({
-      msg: "Specify either clinic_id or center_lab_id, but not both.",
-    });
+    return next(
+      new Error("Specify either clinic_id or center_lab_id, but not both.", {
+        cause: 400,
+      })
+    );
   }
-  const newSubscription = await Subscription.create({
-    clinic_id,
-    center_lab_id,
-  });
-  res.status(201).json({
-    msg: "Subscription created successfully",
-    subscription: newSubscription,
-  });
+
+  try {
+    const newSubscription = await Subscription.create({
+      clinic_id,
+      center_lab_id,
+    });
+
+    res.status(201).json({
+      msg: "Subscription created successfully",
+      subscription: newSubscription,
+    });
+  } catch (error) {
+    console.error("Error creating subscription:", error); // Log any errors
+    next(new Error("Failed to create subscription", { cause: 500 }));
+  }
 };
 
-export const updateSubscription = async (req, res) => {
+export const updateSubscription = async (req, res, next) => {
   const { id } = req.params;
   const { clinic_id, center_lab_id, start_date, end_date, status } = req.body;
   const updatedSubscription = await Subscription.update(
@@ -32,30 +44,20 @@ export const updateSubscription = async (req, res) => {
     .json({ msg: "Subscription updated successfully", updatedSubscription });
 };
 
-export const deleteSubscription = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Subscription.destroy({ where: { subscription_id: id } });
-    res.status(200).json({ msg: "Subscription deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting subscription:", error);
-    res.status(500).json({ msg: "Server error while deleting subscription" });
-  }
+export const deleteSubscription = async (req, res, next) => {
+  const { id } = req.params;
+  await Subscription.destroy({ where: { subscription_id: id } });
+  res.status(200).json({ msg: "Subscription deleted successfully" });
 };
 
 export const getAllSubscriptions = async (req, res) => {
-  try {
-    const { status } = req.query;
-    const whereCondition = status === "Active" ? { status: "Active" } : {};
-    const subscriptions = await Subscription.findAll({
-      where: whereCondition,
-      include: [{ model: Clinic }, { model: CenterLab }],
-    });
-    res.status(200).json(subscriptions);
-  } catch (error) {
-    console.error("Error fetching subscriptions:", error);
-    res.status(500).json({ msg: "Server error while fetching subscriptions" });
-  }
+  const { status } = req.query;
+  const whereCondition = status === "Active" ? { status: "Active" } : {};
+  const subscriptions = await Subscription.findAll({
+    where: whereCondition,
+    include: [{ model: Clinic }, { model: CenterLab }],
+  });
+  res.status(200).json(subscriptions);
 };
 
 export const getSubscriptionById = async (req, res) => {
@@ -66,7 +68,15 @@ export const getSubscriptionById = async (req, res) => {
     include: [{ model: Clinic }, { model: CenterLab }],
   });
   if (!subscription) {
-    return res.status(404).json({ msg: "Subscription not found" });
+    return next(new Error("Subscription not found.", { cause: 404 }));
   }
   return res.status(200).json(subscription);
+};
+
+export const testMiddleware = async (req, res) => {
+  try {
+    return res.status(200).json({ msg: "testMiddleware" });
+  } catch (err) {
+    return res.json(err);
+  }
 };
